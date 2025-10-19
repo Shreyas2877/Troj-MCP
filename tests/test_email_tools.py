@@ -8,6 +8,7 @@ from unittest.mock import MagicMock, patch
 src_path = Path(__file__).parent.parent / "src"
 sys.path.insert(0, str(src_path))
 
+from macro_man.config.settings import get_settings
 from macro_man.tools.email import (
     _add_additional_context,
     _detect_email_type,
@@ -296,8 +297,10 @@ class TestSendEmailViaService:
         assert result["messageId"] == "<test-message-id@gmail.com>"
 
         # Verify the HTTP call was made correctly
+        settings = get_settings()
+        expected_url = f"{settings.email_service_url}/send-email"
         mock_post.assert_called_once_with(
-            "http://localhost:3000/send-email",
+            expected_url,
             json={
                 "to": "test@example.com",
                 "subject": "Test Subject",

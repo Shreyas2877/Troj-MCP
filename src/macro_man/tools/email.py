@@ -8,6 +8,7 @@ from typing import Any
 
 import httpx
 
+from macro_man.config.settings import get_settings
 from macro_man.utils.exceptions import MacroManError, ValidationError
 
 
@@ -287,11 +288,12 @@ def send_email(
 
 def _send_email_via_service(to: str, subject: str, body: str) -> dict[str, Any]:
     """
-    Send email via the actual email service running on localhost:3000.
+    Send email via the actual email service.
     """
 
-    # Email service endpoint
-    email_service_url = "http://localhost:3000/send-email"
+    # Get email service URL from settings
+    settings = get_settings()
+    email_service_url = f"{settings.email_service_url}/send-email"
 
     # Prepare the request payload
     payload = {"to": to, "subject": subject, "body": body}

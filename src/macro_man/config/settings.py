@@ -34,6 +34,9 @@ class Settings(BaseSettings):
     # External Services
     openai_api_key: str | None = Field(default=None, alias="OPENAI_API_KEY")
     anthropic_api_key: str | None = Field(default=None, alias="ANTHROPIC_API_KEY")
+    email_service_url: str = Field(
+        default="http://localhost:3000", alias="EMAIL_SERVICE_URL"
+    )
 
     # AWS Configuration
     aws_access_key_id: str | None = Field(default=None, alias="AWS_ACCESS_KEY_ID")
