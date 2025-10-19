@@ -1,11 +1,6 @@
 """Utility modules for Macro-Man MCP Server."""
 
+from .exceptions import AuthenticationError, MacroManError, ValidationError
 from .logging import setup_logging
-from .exceptions import MacroManError, ValidationError, AuthenticationError
 
-__all__ = [
-    "setup_logging",
-    "MacroManError",
-    "ValidationError", 
-    "AuthenticationError"
-]
+__all__ = ["AuthenticationError", "MacroManError", "ValidationError", "setup_logging"]

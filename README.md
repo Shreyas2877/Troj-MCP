@@ -250,3 +250,12 @@ python main.py
 2. Build iOS app (Phase 4)
 3. Add authentication (Phase 2 - Security)
 4. Integrate with external services (Phase 3 - Advanced Tools)
+
+
+For local deployments : 
+
+make ci          # Run all CI checks locally
+make test        # Run tests with coverage
+make lint        # Run linting
+make format      # Format code
+make check-coverage  # Check per-file coverage
