@@ -6,7 +6,6 @@ This is the main entry point for the Macro-Man MCP server.
 Run this script to start the server.
 """
 
-import asyncio
 import sys
 from pathlib import Path
 

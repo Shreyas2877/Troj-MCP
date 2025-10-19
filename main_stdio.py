@@ -20,10 +20,10 @@ def main() -> None:
     try:
         # Create MCP server
         mcp = create_mcp_server()
-        
+
         # Run with stdio transport for Claude Desktop
         mcp.run(transport="stdio")
-        
+
     except KeyboardInterrupt:
         print("Server shutdown requested by user", file=sys.stderr)
     except Exception as e:

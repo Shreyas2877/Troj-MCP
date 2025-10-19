@@ -33,15 +33,15 @@ class TestMCPIntegration:
         # Skip in CI environments where stdio transport may not work properly
         if os.getenv("CI") or os.getenv("GITHUB_ACTIONS"):
             pytest.skip("Skipping stdio integration test in CI environment")
-            
+
         # Get the project root directory (parent of tests directory)
         project_root = Path(__file__).parent.parent
         main_stdio_path = project_root / "main_stdio.py"
-        
+
         # Check if main_stdio.py exists
         if not main_stdio_path.exists():
             pytest.skip("main_stdio.py not found - skipping stdio integration test")
-        
+
         # Start the MCP server process
         process = subprocess.Popen(
             ["python", str(main_stdio_path)],
@@ -140,15 +140,15 @@ class TestMCPIntegration:
         # Skip in CI environments where stdio transport may not work properly
         if os.getenv("CI") or os.getenv("GITHUB_ACTIONS"):
             pytest.skip("Skipping stdio integration test in CI environment")
-            
+
         # Get the project root directory (parent of tests directory)
         project_root = Path(__file__).parent.parent
         main_stdio_path = project_root / "main_stdio.py"
-        
+
         # Check if main_stdio.py exists
         if not main_stdio_path.exists():
             pytest.skip("main_stdio.py not found - skipping stdio integration test")
-        
+
         # Start the MCP server process
         process = subprocess.Popen(
             ["python", str(main_stdio_path)],
