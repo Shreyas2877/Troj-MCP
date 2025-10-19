@@ -223,16 +223,15 @@ def send_email(to: str, subject: str, body: str, elaborate: bool = True) -> Dict
     else:
         elaborated_body = body
     
-    # In a real implementation, you would send the email here
-    # For now, we'll simulate the email sending process
-    
+    # Send email via the actual email service
     try:
-        # Simulate email sending (replace with actual email service)
-        email_result = _simulate_email_sending(to, subject, elaborated_body)
+        # Call the real email service
+        email_result = _send_email_via_service(to, subject, elaborated_body)
         
         return {
-            "success": True,
-            "message": "Email sent successfully",
+            "success": email_result.get("success", False),
+            "message": email_result.get("message", "Email sending completed"),
+            "messageId": email_result.get("messageId"),
             "recipient": to,
             "subject": subject,
             "body_length": len(elaborated_body),
@@ -244,22 +243,55 @@ def send_email(to: str, subject: str, body: str, elaborate: bool = True) -> Dict
         raise MacroManError(f"Failed to send email: {str(e)}")
 
 
-def _simulate_email_sending(to: str, subject: str, body: str) -> Dict[str, Any]:
+def _send_email_via_service(to: str, subject: str, body: str) -> Dict[str, Any]:
     """
-    Simulate email sending process.
-    In a real implementation, this would integrate with an email service.
+    Send email via the actual email service running on localhost:3000.
     """
-    # Simulate some processing time
     import time
-    time.sleep(0.1)
     
-    # Return simulated result
-    return {
-        "message_id": f"msg_{hash(to + subject + str(time.time()))}",
-        "timestamp": time.time(),
-        "status": "sent",
-        "service": "simulated_email_service"
+    # Email service endpoint
+    email_service_url = "http://localhost:3000/send-email"
+    
+    # Prepare the request payload
+    payload = {
+        "to": to,
+        "subject": subject,
+        "body": body
     }
+    
+    try:
+        # Make HTTP request to the email service
+        response = httpx.post(
+            email_service_url,
+            json=payload,
+            headers={"Content-Type": "application/json"},
+            timeout=30.0
+        )
+        
+        # Check if the request was successful
+        if response.status_code == 200:
+            result = response.json()
+            return result
+        else:
+            # Handle HTTP errors
+            error_msg = f"Email service returned status {response.status_code}"
+            try:
+                error_detail = response.json()
+                if "message" in error_detail:
+                    error_msg += f": {error_detail['message']}"
+            except:
+                error_msg += f": {response.text}"
+            
+            raise MacroManError(error_msg)
+            
+    except httpx.TimeoutException:
+        raise MacroManError("Email service request timed out")
+    except httpx.ConnectError:
+        raise MacroManError("Could not connect to email service at localhost:3000")
+    except httpx.RequestError as e:
+        raise MacroManError(f"Email service request failed: {str(e)}")
+    except Exception as e:
+        raise MacroManError(f"Unexpected error calling email service: {str(e)}")
 
 
 def register_email_tools(mcp_server):
