@@ -1,261 +1,436 @@
-# Macro-Man: Personal MCP Server & iOS App
+# Macro-Man: Model Context Protocol (MCP) Server
 
-A comprehensive project to build a personal Model Context Protocol (MCP) server deployed on AWS EC2 with a simple iOS frontend for seamless AI model interactions and service integrations.
+A comprehensive Model Context Protocol (MCP) server implementation that provides a standardized interface for AI models to interact with various tools and services. This server enables seamless integration between AI applications and external systems through a well-defined protocol.
 
-## 🎯 Project Vision
+## What is Model Context Protocol (MCP)?
 
-Build a personal MCP server that acts as a universal interface between AI models and various services (existing or custom), with an intuitive iOS app for easy interaction. This setup will enable easy integration with any service while keeping all the complex MCP logic in the backend.
+Model Context Protocol (MCP) is a standardized communication protocol that enables AI models to interact with external tools and services in a consistent, secure, and efficient manner. It provides:
 
-## 📋 Project Roadmap
+- **Standardized Interface**: Common protocol for tool registration and execution
+- **Type Safety**: Strong typing for tool parameters and responses
+- **Error Handling**: Comprehensive error management and reporting
+- **Security**: Built-in validation and sanitization
+- **Extensibility**: Easy addition of new tools and services
 
-### Phase 1: Foundation & Research ✅
-- [x] Research MCP protocol specifications and capabilities
-- [x] Analyze system architecture requirements
-- [x] Identify technology stack for each component
-- [x] Create comprehensive project roadmap
-
-### Phase 2: Backend Infrastructure Setup ✅
-- [x] **Project Structure & Development Setup**
-  - [x] Create proper project directory structure with industry standards
-  - [x] Set up requirements.txt with all dependencies
-  - [x] Implement basic MCP server with core tools
-  - [x] Add configuration management and environment variables
-  - [x] Implement proper logging system with structured logging
-  - [x] Add comprehensive error handling and custom exceptions
-  - [x] Create Docker configuration for easy deployment
-  - [x] Set up basic test structure with pytest
-
-- [ ] **AWS EC2 Instance Setup**
-  - [ ] Choose appropriate EC2 instance type (t3.medium/large recommended)
-  - [ ] Configure security groups (ports 22, 80, 443, 8000)
-  - [ ] Set up Ubuntu 20.04+ or Amazon Linux 2
-  - [ ] Install Python 3.10+, pip, virtualenv
-  - [ ] Configure SSL/TLS certificates (Let's Encrypt)
-
-- [ ] **MCP Server Deployment**
-  - [ ] Deploy MCP server to EC2
-  - [ ] Implement authentication and authorization (JWT)
-  - [ ] Set up process management (systemd/PM2)
-  - [ ] Configure monitoring and alerting
-
-### Phase 3: Core MCP Tools Implementation ✅
-- [x] **Basic Tools**
-  - [x] Mathematical operations (add, multiply)
-  - [x] User interaction (greet, echo)
-  - [x] System information (system info, Python info)
-  - [x] File operations (read, write, list, JSON)
-  - [x] System utilities (process info, system stats, environment variables)
-  - [x] Command execution (safe command execution with validation)
-
-- [ ] **Advanced Tools**
-  - [ ] Database operations (CRUD)
-  - [ ] API integrations (REST/GraphQL)
-  - [ ] Custom service integrations
-  - [ ] Data processing and transformation
-  - [ ] Notification systems
-  - [ ] Analytics and reporting
-
-### Phase 4: iOS Application Development
-- [ ] **Project Setup**
-  - [ ] Create new iOS project in Xcode
-  - [ ] Set up Swift networking layer
-  - [ ] Implement MCP client protocol
-  - [ ] Design intuitive UI/UX
-
-- [ ] **Core Features**
-  - [ ] User authentication
-  - [ ] Tool discovery and execution
-  - [ ] Real-time communication with MCP server
-  - [ ] Response handling and display
-  - [ ] Offline capabilities
-
-### Phase 5: Integration & Testing
-- [ ] **Service Integrations**
-  - [ ] Connect to existing APIs
-  - [ ] Implement custom service endpoints
-  - [ ] Test data flow and error handling
-  - [ ] Performance optimization
-
-- [ ] **Testing & Quality Assurance**
-  - [ ] Unit tests for MCP server
-  - [ ] Integration tests for iOS app
-  - [ ] End-to-end testing
-  - [ ] Security testing and vulnerability assessment
-
-### Phase 6: Deployment & Production
-- [ ] **Production Deployment**
-  - [ ] Deploy MCP server to EC2
-  - [ ] Set up monitoring and alerting (CloudWatch)
-  - [ ] Configure backup and disaster recovery
-  - [ ] Implement CI/CD pipeline
-
-- [ ] **iOS App Store Submission**
-  - [ ] App Store review preparation
-  - [ ] Privacy policy and terms of service
-  - [ ] App Store metadata and screenshots
-  - [ ] Beta testing with TestFlight
-
-### Phase 7: Maintenance & Enhancement
-- [ ] **Ongoing Maintenance**
-  - [ ] Regular security updates
-  - [ ] Performance monitoring
-  - [ ] User feedback integration
-  - [ ] Feature enhancements
-
-## 🏗️ System Architecture
+## Architecture Overview
 
 ```
-┌─────────────────┐    HTTPS/WSS    ┌──────────────────┐
-│   iOS App       │◄──────────────►│   MCP Server     │
-│   (Frontend)    │                 │   (EC2 Backend)  │
-└─────────────────┘                 └──────────────────┘
-                                             │
-                                             ▼
-                                    ┌──────────────────┐
-                                    │   External       │
-                                    │   Services       │
-                                    │   (APIs, DBs,    │
-                                    │    Custom)       │
-                                    └──────────────────┘
+┌─────────────────────────────────────────────────────────────────┐
+│                        MCP Server Architecture                  │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                 │
+│  ┌─────────────────┐    ┌─────────────────┐    ┌──────────────┐ │
+│  │   HTTP Client   │    │  Claude Desktop │    │  Other MCP   │ │
+│  │   (Web/API)     │    │   (stdio)       │    │  Clients     │ │
+│  └─────────────────┘    └─────────────────┘    └──────────────┘ │
+│           │                       │                       │      │
+│           │ HTTP/JSON-RPC         │ stdio/JSON-RPC        │      │
+│           │                       │                       │      │
+│           ▼                       ▼                       ▼      │
+│  ┌─────────────────────────────────────────────────────────────┐ │
+│  │                MCP Server Core                              │ │
+│  │  ┌─────────────┐  ┌─────────────┐  ┌─────────────────────┐ │ │
+│  │  │   Router    │  │  Validator  │  │   Error Handler     │ │ │
+│  │  └─────────────┘  └─────────────┘  └─────────────────────┘ │ │
+│  └─────────────────────────────────────────────────────────────┘ │
+│           │                       │                       │      │
+│           ▼                       ▼                       ▼      │
+│  ┌─────────────────────────────────────────────────────────────┐ │
+│  │                    Tool Registry                            │ │
+│  │  ┌─────────────┐  ┌─────────────┐  ┌─────────────────────┐ │ │
+│  │  │ Basic Tools │  │ File Ops    │  │   System Utils      │ │ │
+│  │  │ Email Tools │  │ Custom Tools│  │   External APIs     │ │ │
+│  │  └─────────────┘  └─────────────┘  └─────────────────────┘ │ │
+│  └─────────────────────────────────────────────────────────────┘ │
+│           │                       │                       │      │
+│           ▼                       ▼                       ▼      │
+│  ┌─────────────────────────────────────────────────────────────┐ │
+│  │                External Services                            │ │
+│  │  ┌─────────────┐  ┌─────────────┐  ┌─────────────────────┐ │ │
+│  │  │ Email API   │  │ File System │  │   System Commands   │ │ │
+│  │  │ (localhost: │  │             │  │                     │ │ │
+│  │  │   3000)     │  │             │  │                     │ │ │
+│  │  └─────────────┘  └─────────────┘  └─────────────────────┘ │ │
+│  └─────────────────────────────────────────────────────────────┘ │
+└─────────────────────────────────────────────────────────────────┘
 ```
 
-## 🛠️ Technology Stack
+## Available Tools
 
-### Backend (MCP Server)
-- **Language**: Python 3.10+
-- **Framework**: FastMCP (MCP Python package)
-- **Deployment**: AWS EC2
-- **Process Management**: systemd or PM2
-- **Monitoring**: AWS CloudWatch
-- **Security**: JWT, HTTPS, SSL/TLS
+### Basic Operations
+- **`add_numbers(a, b)`** - Add two numbers
+- **`multiply_numbers(a, b)`** - Multiply two numbers  
+- **`greet_user(name)`** - Greet a user by name
+- **`echo_message(message)`** - Echo back a message
 
-### Frontend (iOS App)
-- **Language**: Swift
-- **Framework**: SwiftUI or UIKit
-- **Networking**: URLSession or Alamofire
-- **Architecture**: MVVM or Clean Architecture
-- **Testing**: XCTest
+### File Operations
+- **`read_file(file_path)`** - Read text file contents
+- **`write_file(file_path, content, overwrite)`** - Write content to file
+- **`list_directory(directory_path, include_hidden)`** - List directory contents
+- **`read_json_file(file_path)`** - Read and parse JSON file
+- **`write_json_file(file_path, data, indent)`** - Write data as JSON
 
-### Infrastructure
-- **Cloud Provider**: AWS
-- **Compute**: EC2 (t3.medium/large)
-- **Storage**: EBS volumes
-- **Networking**: VPC, Security Groups
-- **SSL**: Let's Encrypt or AWS Certificate Manager
+### System Utilities
+- **`get_system_info()`** - Get basic system information
+- **`get_system_stats()`** - Get comprehensive system statistics
+- **`get_process_info(pid)`** - Get process information
+- **`get_environment_variables(prefix)`** - Get environment variables
+- **`get_python_info()`** - Get Python runtime information
+- **`execute_command(command, timeout)`** - Execute system command safely
 
-## 🚀 Getting Started
+### Email Service Integration
+- **`send_email(to, subject, body)`** - Send email via external service
+
+## Tool Registration Framework
+
+### How Tools Are Registered
+
+Tools are registered through a modular system that allows for easy extension and maintenance:
+
+```python
+# Example: Registering a new tool
+from macro_man.tools import register_tool
+
+@register_tool
+def my_custom_tool(param1: str, param2: int) -> dict:
+    """
+    Custom tool description.
+    
+    Args:
+        param1: Description of parameter 1
+        param2: Description of parameter 2
+        
+    Returns:
+        Dictionary with tool execution result
+    """
+    # Tool implementation
+    return {"result": "success", "data": f"Processed {param1} with {param2}"}
+```
+
+### Tool Registration Process
+
+1. **Tool Definition**: Define your tool function with proper type hints
+2. **Documentation**: Add comprehensive docstring with parameter descriptions
+3. **Registration**: Use the `@register_tool` decorator
+4. **Validation**: Framework automatically validates parameters and types
+5. **Integration**: Tool becomes available to all MCP clients
+
+### Adding New Tools
+
+To add a new tool to the server:
+
+1. Create a new file in `src/macro_man/tools/`
+2. Implement your tool function with proper typing
+3. Add the tool to `src/macro_man/tools/__init__.py`
+4. The tool will be automatically available to MCP clients
+
+## Framework Architecture
+
+### Core Components
+
+#### 1. MCP Server Core
+- **Router**: Handles incoming requests and routes to appropriate tools
+- **Validator**: Validates tool parameters and request format
+- **Error Handler**: Manages errors and provides consistent error responses
+
+#### 2. Tool Registry
+- **Tool Discovery**: Automatically discovers and registers available tools
+- **Type Validation**: Ensures parameter types match tool definitions
+- **Execution Engine**: Executes tools with proper error handling
+
+#### 3. Transport Layer
+- **HTTP Transport**: Web-based communication via JSON-RPC over HTTP
+- **stdio Transport**: Process-based communication via stdin/stdout
+
+### Configuration Management
+
+The server uses environment variables for configuration:
+
+```bash
+# Core settings
+SECRET_KEY=your-secret-key
+LOG_LEVEL=INFO
+DEBUG=false
+
+# Email service integration
+EMAIL_SERVICE_URL=http://localhost:3000
+
+# Server settings
+HTTP_HOST=0.0.0.0
+HTTP_PORT=8000
+```
+
+## Getting Started
 
 ### Prerequisites
-- Python 3.10+ installed
-- Basic understanding of MCP protocol
-- (Optional) AWS account with EC2 access for deployment
-- (Optional) macOS with Xcode for iOS development
 
-### Quick Start (Local Development)
+- Python 3.10 or higher
+- pip (Python package manager)
+- (Optional) Virtual environment for isolation
 
-1. **Clone and Setup**
+### Installation
+
+1. **Clone the repository**
    ```bash
-   git clone <your-repo-url>
+   git clone <repository-url>
    cd macro-man
-   chmod +x scripts/setup.sh
-   ./scripts/setup.sh
    ```
 
-2. **Configure Environment**
+2. **Set up virtual environment**
    ```bash
-   # Edit the .env file with your settings
+   python -m venv venv
+   source venv/bin/activate  # On Windows: venv\Scripts\activate
+   ```
+
+3. **Install dependencies**
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+4. **Configure environment**
+   ```bash
    cp env.example .env
-   # Edit .env file with your SECRET_KEY and other settings
+   # Edit .env file with your settings
    ```
 
-3. **Run the MCP Server**
-   ```bash
-   source venv/bin/activate
-   python main.py
-   ```
+### Running the Server
 
-4. **Test the Server**
-   ```bash
-   # Run tests
-   python -m pytest tests/ -v
-   
-   # Test with curl (server should be running on localhost:8000)
-   curl -X POST http://localhost:8000/mcp \
-     -H "Content-Type: application/json" \
-     -d '{"method": "add_numbers", "params": [5, 3], "id": 1}'
-   ```
+#### Option 1: HTTP Transport (Web/API)
 
-### Available MCP Tools
+Start the server for web-based access:
 
-The server comes with these built-in tools:
-
-**Basic Operations:**
-- `add_numbers(a, b)` - Add two numbers
-- `multiply_numbers(a, b)` - Multiply two numbers
-- `greet_user(name)` - Greet a user by name
-- `echo_message(message)` - Echo back a message
-
-**File Operations:**
-- `read_file(file_path)` - Read text file contents
-- `write_file(file_path, content, overwrite)` - Write content to file
-- `list_directory(directory_path, include_hidden)` - List directory contents
-- `read_json_file(file_path)` - Read and parse JSON file
-- `write_json_file(file_path, data, indent)` - Write data as JSON
-
-**System Utilities:**
-- `get_system_info()` - Get basic system information
-- `get_system_stats()` - Get comprehensive system statistics
-- `get_process_info(pid)` - Get process information
-- `get_environment_variables(prefix)` - Get environment variables
-- `get_python_info()` - Get Python runtime information
-- `execute_command(command, timeout)` - Execute system command safely
-
-## 📚 Key Resources
-
-- [MCP Official Documentation](https://modelcontextprotocol.io/)
-- [MCP Python Package](https://pypi.org/project/mcp/)
-- [AWS EC2 Documentation](https://docs.aws.amazon.com/ec2/)
-- [iOS Networking Guide](https://developer.apple.com/documentation/foundation/urlsession)
-
-## 🔄 Progress Tracking
-
-This README will be updated as we progress through each phase. Check the checkboxes above to track our advancement through the project roadmap.
-
----
-
-*Last Updated: October 16, 2024*
-*Current Phase: Phase 2 - Backend Infrastructure Setup (Project Structure Complete)*
-
-## 🎉 Current Status
-
-**✅ COMPLETED:**
-- ✅ Complete project structure with industry standards
-- ✅ MCP server implementation with 15+ built-in tools
-- ✅ Configuration management with environment variables
-- ✅ Structured logging with Rich console output
-- ✅ Comprehensive error handling and custom exceptions
-- ✅ Docker configuration for easy deployment
-- ✅ Development environment setup script
-- ✅ All dependencies installed and tested
-
-**🚀 READY TO USE:**
-Your MCP server is now fully functional and ready to run! You can start it with:
 ```bash
-source venv/bin/activate
 python main.py
 ```
 
-**📋 NEXT STEPS:**
-1. Deploy to AWS EC2 (Phase 2 - AWS Setup)
-2. Build iOS app (Phase 4)
-3. Add authentication (Phase 2 - Security)
-4. Integrate with external services (Phase 3 - Advanced Tools)
+The server will start on `http://localhost:8000` by default.
 
+**Test the HTTP server:**
+```bash
+curl -X POST http://localhost:8000/mcp \
+  -H "Content-Type: application/json" \
+  -d '{"method": "add_numbers", "params": [5, 3], "id": 1}'
+```
 
-For local deployments : 
+#### Option 2: stdio Transport (Claude Desktop)
 
-make ci          # Run all CI checks locally
-make test        # Run tests with coverage
-make lint        # Run linting
-make format      # Format code
-make check-coverage  # Check per-file coverage
+Start the server for Claude Desktop integration:
+
+```bash
+python main_stdio.py
+```
+
+This starts the server in stdio mode, waiting for input via stdin.
+
+**Claude Desktop Configuration:**
+```json
+{
+  "mcpServers": {
+    "macro-man": {
+      "command": "python",
+      "args": ["/path/to/main_stdio.py"]
+    }
+  }
+}
+```
+
+### Transport Comparison
+
+| Feature | HTTP Transport | stdio Transport |
+|---------|----------------|-----------------|
+| **Use Case** | Web APIs, external clients | Claude Desktop, process communication |
+| **Communication** | HTTP/JSON-RPC | stdin/stdout/JSON-RPC |
+| **Port** | 8000 (configurable) | None (process communication) |
+| **Client** | Any HTTP client | Claude Desktop, other MCP clients |
+| **Startup** | Manual (`python main.py`) | Automatic (managed by client) |
+| **Lifecycle** | Manual management | Client-managed |
+
+## Email Service Integration Example
+
+### Overview
+
+The server integrates with an external email service running on `localhost:3000`. This demonstrates how to integrate with external APIs and services.
+
+### Email Service API
+
+The email service expects the following format:
+
+**Endpoint:** `POST http://localhost:3000/send-email`
+
+**Request Body:**
+```json
+{
+  "to": "recipient@example.com",
+  "subject": "Email Subject",
+  "body": "Email content"
+}
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "message": "Email sent successfully",
+  "messageId": "<message-id@example.com>"
+}
+```
+
+### Integration Implementation
+
+```python
+# src/macro_man/tools/email.py
+def send_email(to: str, subject: str, body: str) -> dict:
+    """
+    Send email via external email service.
+    
+    Args:
+        to: Recipient email address
+        subject: Email subject
+        body: Email body content
+        
+    Returns:
+        Dictionary with email sending result
+    """
+    # Get email service URL from configuration
+    settings = get_settings()
+    email_service_url = f"{settings.email_service_url}/send-email"
+    
+    # Prepare request payload
+    payload = {"to": to, "subject": subject, "body": body}
+    
+    # Make HTTP request to email service
+    response = httpx.post(
+        email_service_url,
+        json=payload,
+        headers={"Content-Type": "application/json"},
+        timeout=30.0,
+    )
+    
+    # Handle response and return result
+    return response.json()
+```
+
+### Configuration
+
+Set the email service URL in your `.env` file:
+
+```bash
+EMAIL_SERVICE_URL=http://localhost:3000
+```
+
+### Usage
+
+Once configured, the email tool is available to all MCP clients:
+
+```python
+# Via HTTP client
+curl -X POST http://localhost:8000/mcp \
+  -H "Content-Type: application/json" \
+  -d '{
+    "method": "send_email",
+    "params": {
+      "to": "user@example.com",
+      "subject": "Test Email",
+      "body": "This is a test email"
+    },
+    "id": 1
+  }'
+```
+
+## Development
+
+### Running Tests
+
+```bash
+# Run all tests
+python -m pytest tests/ -v
+
+# Run with coverage
+python -m pytest tests/ --cov=src/macro_man --cov-report=html
+
+# Run specific test file
+python -m pytest tests/test_email_tools.py -v
+```
+
+### Code Quality
+
+```bash
+# Linting
+ruff check src/ tests/
+
+# Formatting
+ruff format src/ tests/
+
+# Type checking
+mypy src/ --ignore-missing-imports
+```
+
+### Adding New Tools
+
+1. **Create tool file** in `src/macro_man/tools/`
+2. **Implement tool function** with proper typing and documentation
+3. **Add to tool registry** in `src/macro_man/tools/__init__.py`
+4. **Write tests** in `tests/`
+5. **Update documentation** as needed
+
+## API Reference
+
+### MCP Protocol
+
+The server implements the Model Context Protocol specification:
+
+- **Request Format**: JSON-RPC 2.0
+- **Response Format**: JSON-RPC 2.0
+- **Error Handling**: Standardized error codes and messages
+- **Type Safety**: Strong typing for all parameters and responses
+
+### Tool Execution
+
+All tools follow a consistent pattern:
+
+```python
+def tool_name(param1: Type1, param2: Type2) -> dict:
+    """
+    Tool description.
+    
+    Args:
+        param1: Parameter description
+        param2: Parameter description
+        
+    Returns:
+        Dictionary with execution result
+        
+    Raises:
+        ValidationError: If parameters are invalid
+        MacroManError: If tool execution fails
+    """
+    # Implementation
+    return {"result": "success", "data": "..."}
+```
+
+## Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Add tests for new functionality
+5. Ensure all tests pass
+6. Submit a pull request
+
+## License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+## Support
+
+For questions, issues, or contributions, please:
+
+1. Check the existing issues
+2. Create a new issue with detailed information
+3. Provide reproduction steps for bugs
+4. Include relevant logs and error messages
+
+---
+
+*Last Updated: December 2024*
+*Version: 1.0.0*
