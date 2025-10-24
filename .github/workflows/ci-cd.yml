@@ -36,11 +36,13 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
+        # Ensure all linting tools are available
+        pip install ruff pytest-cov
         
     - name: Run linting
       run: |
         ruff check .
-        black --check .
+        ruff format --check .
         
     - name: Run tests with coverage
       run: |
