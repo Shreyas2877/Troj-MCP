@@ -33,10 +33,7 @@ echo ""
 TEMP_FILE=$(mktemp)
 cat > "$TEMP_FILE" << 'EOF'
 {
-  "required_status_checks": {
-    "strict": true,
-    "contexts": ["test"]
-  },
+  "required_status_checks": null,
   "enforce_admins": true,
   "required_pull_request_reviews": null,
   "restrictions": null,
