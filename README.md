@@ -1,182 +1,93 @@
-# Macro-Man: Model Context Protocol (MCP) Server
+# 🚀 Troj-MCP
 
-A comprehensive Model Context Protocol (MCP) server implementation that provides a standardized interface for AI models to interact with various tools and services. This server enables seamless integration between AI applications and external systems through a well-defined protocol.
+A comprehensive Model Context Protocol (MCP) server that provides powerful tools for system integration, file operations, calendar management, email handling, and more.
 
-## What is Model Context Protocol (MCP)?
+[![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Code style: ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
+[![Tests](https://img.shields.io/badge/tests-passing-green.svg)](https://github.com/Shreyas2877/Troj-MCP/actions)
 
-Model Context Protocol (MCP) is a standardized communication protocol that enables AI models to interact with external tools and services in a consistent, secure, and efficient manner. It provides:
+## 🎯 What is Troj-MCP?
 
-- **Standardized Interface**: Common protocol for tool registration and execution
-- **Type Safety**: Strong typing for tool parameters and responses
-- **Error Handling**: Comprehensive error management and reporting
-- **Security**: Built-in validation and sanitization
-- **Extensibility**: Easy addition of new tools and services
+Troj-MCP is a versatile MCP server that provides a comprehensive suite of tools for:
 
-## Architecture Overview
+- **System Operations** - Monitor system performance, processes, and environment
+- **File Management** - Read, write, and manage files and directories
+- **Calendar Integration** - Schedule meetings and manage events
+- **Email Operations** - Send and receive emails with advanced filtering
+- **Command Execution** - Safely execute system commands with validation
+- **Data Processing** - Handle JSON files and structured data
 
-```
-┌─────────────────────────────────────────────────────────────────┐
-│                        MCP Server Architecture                  │
-├─────────────────────────────────────────────────────────────────┤
-│                                                                 │
-│  ┌─────────────────┐    ┌─────────────────┐    ┌──────────────┐ │
-│  │   HTTP Client   │    │  Claude Desktop │    │  Other MCP   │ │
-│  │   (Web/API)     │    │   (stdio)       │    │  Clients     │ │
-│  └─────────────────┘    └─────────────────┘    └──────────────┘ │
-│           │                       │                       │      │
-│           │ HTTP/JSON-RPC         │ stdio/JSON-RPC        │      │
-│           │                       │                       │      │
-│           ▼                       ▼                       ▼      │
-│  ┌─────────────────────────────────────────────────────────────┐ │
-│  │                MCP Server Core                              │ │
-│  │  ┌─────────────┐  ┌─────────────┐  ┌─────────────────────┐ │ │
-│  │  │   Router    │  │  Validator  │  │   Error Handler     │ │ │
-│  │  └─────────────┘  └─────────────┘  └─────────────────────┘ │ │
-│  └─────────────────────────────────────────────────────────────┘ │
-│           │                       │                       │      │
-│           ▼                       ▼                       ▼      │
-│  ┌─────────────────────────────────────────────────────────────┐ │
-│  │                    Tool Registry                            │ │
-│  │  ┌─────────────┐  ┌─────────────┐  ┌─────────────────────┐ │ │
-│  │  │ Basic Tools │  │ File Ops    │  │   System Utils      │ │ │
-│  │  │ Email Tools │  │ Custom Tools│  │   External APIs     │ │ │
-│  │  └─────────────┘  └─────────────┘  └─────────────────────┘ │ │
-│  └─────────────────────────────────────────────────────────────┘ │
-│           │                       │                       │      │
-│           ▼                       ▼                       ▼      │
-│  ┌─────────────────────────────────────────────────────────────┐ │
-│  │                External Services                            │ │
-│  │  ┌─────────────┐  ┌─────────────┐  ┌─────────────────────┐ │ │
-│  │  │ Email API   │  │ File System │  │   System Commands   │ │ │
-│  │  │ (localhost: │  │             │  │                     │ │ │
-│  │  │   3000)     │  │             │  │                     │ │ │
-│  │  └─────────────┘  └─────────────┘  └─────────────────────┘ │ │
-│  └─────────────────────────────────────────────────────────────┘ │
-└─────────────────────────────────────────────────────────────────┘
-```
+## ✨ Features
 
-## Available Tools
+### 🛠️ **Comprehensive Tool Suite**
 
-### Basic Operations
-- **`add_numbers(a, b)`** - Add two numbers
-- **`multiply_numbers(a, b)`** - Multiply two numbers  
-- **`greet_user(name)`** - Greet a user by name
-- **`echo_message(message)`** - Echo back a message
+#### **Basic Operations**
+- `add_numbers` - Mathematical addition with validation
+- `multiply_numbers` - Mathematical multiplication with error handling
+- `greet_user` - Personalized user greetings
+- `echo_message` - Message echoing and validation
 
-### File Operations
-- **`read_file(file_path)`** - Read text file contents
-- **`write_file(file_path, content, overwrite)`** - Write content to file
-- **`list_directory(directory_path, include_hidden)`** - List directory contents
-- **`read_json_file(file_path)`** - Read and parse JSON file
-- **`write_json_file(file_path, data, indent)`** - Write data as JSON
+#### **System Monitoring**
+- `get_system_info` - Complete system information retrieval
+- `get_system_stats` - Real-time system performance metrics
+- `get_process_info` - Process monitoring and analysis
+- `get_environment_variables` - Environment variable inspection
+- `get_python_info` - Python runtime information
 
-### System Utilities
-- **`get_system_info()`** - Get basic system information
-- **`get_system_stats()`** - Get comprehensive system statistics
-- **`get_process_info(pid)`** - Get process information
-- **`get_environment_variables(prefix)`** - Get environment variables
-- **`get_python_info()`** - Get Python runtime information
-- **`execute_command(command, timeout)`** - Execute system command safely
+#### **File Operations**
+- `read_file` - Safe file reading with validation
+- `write_file` - Secure file writing with overwrite protection
+- `list_directory` - Directory listing with filtering options
+- `read_json_file` - JSON file parsing and validation
+- `write_json_file` - Structured JSON file creation
 
-### Email Service Integration
-- **`send_email(to, subject, body)`** - Send email via external service
+#### **Calendar Integration**
+- `schedule_meet` - Meeting scheduling with timezone support
+- `list_events` - Calendar event retrieval and filtering
+- Full Google Calendar API integration
+- Timezone-aware scheduling
 
-## Tool Registration Framework
+#### **Email Management**
+- `send_email` - Email sending with external service integration
+- `read_email` - Email retrieval with advanced filtering
+- Support for multiple email providers
+- Thread-based email organization
 
-### How Tools Are Registered
+#### **Command Execution**
+- `execute_command` - Secure command execution with timeout protection
+- Input validation and sanitization
+- Dangerous command detection and prevention
 
-Tools are registered through a modular system that allows for easy extension and maintenance:
+### 🔒 **Security & Reliability**
+- **Input Validation** - Comprehensive input sanitization and validation
+- **Command Security** - Dangerous command detection and prevention
+- **Error Handling** - Graceful error handling with detailed logging
+- **Type Safety** - Runtime type checking and validation
+- **Logging** - Comprehensive structured logging with correlation IDs
 
-```python
-# Example: Registering a new tool
-from macro_man.tools import register_tool
+### 🧪 **Quality Assurance**
+- **95%+ Test Coverage** - Comprehensive test suite
+- **Linting** - Code quality enforcement with Ruff
+- **Type Checking** - Static type analysis with MyPy
+- **Security Scanning** - Automated security checks with Bandit and Safety
 
-@register_tool
-def my_custom_tool(param1: str, param2: int) -> dict:
-    """
-    Custom tool description.
-    
-    Args:
-        param1: Description of parameter 1
-        param2: Description of parameter 2
-        
-    Returns:
-        Dictionary with tool execution result
-    """
-    # Tool implementation
-    return {"result": "success", "data": f"Processed {param1} with {param2}"}
-```
-
-### Tool Registration Process
-
-1. **Tool Definition**: Define your tool function with proper type hints
-2. **Documentation**: Add comprehensive docstring with parameter descriptions
-3. **Registration**: Use the `@register_tool` decorator
-4. **Validation**: Framework automatically validates parameters and types
-5. **Integration**: Tool becomes available to all MCP clients
-
-### Adding New Tools
-
-To add a new tool to the server:
-
-1. Create a new file in `src/macro_man/tools/`
-2. Implement your tool function with proper typing
-3. Add the tool to `src/macro_man/tools/__init__.py`
-4. The tool will be automatically available to MCP clients
-
-## Framework Architecture
-
-### Core Components
-
-#### 1. MCP Server Core
-- **Router**: Handles incoming requests and routes to appropriate tools
-- **Validator**: Validates tool parameters and request format
-- **Error Handler**: Manages errors and provides consistent error responses
-
-#### 2. Tool Registry
-- **Tool Discovery**: Automatically discovers and registers available tools
-- **Type Validation**: Ensures parameter types match tool definitions
-- **Execution Engine**: Executes tools with proper error handling
-
-#### 3. Transport Layer
-- **HTTP Transport**: Web-based communication via JSON-RPC over HTTP
-- **stdio Transport**: Process-based communication via stdin/stdout
-
-### Configuration Management
-
-The server uses environment variables for configuration:
-
-```bash
-# Core settings
-SECRET_KEY=your-secret-key
-LOG_LEVEL=INFO
-DEBUG=false
-
-# Email service integration
-EMAIL_SERVICE_URL=http://localhost:3000
-
-# Server settings
-HTTP_HOST=0.0.0.0
-HTTP_PORT=8000
-```
-
-## Getting Started
+## 🚀 Quick Start
 
 ### Prerequisites
 
-- Python 3.10 or higher
-- pip (Python package manager)
-- (Optional) Virtual environment for isolation
+- Python 3.11 or higher
+- pip (Python package installer)
 
 ### Installation
 
 1. **Clone the repository**
    ```bash
-   git clone <repository-url>
-   cd macro-man
+   git clone https://github.com/Shreyas2877/Troj-MCP.git
+   cd Troj-MCP
    ```
 
-2. **Set up virtual environment**
+2. **Create a virtual environment**
    ```bash
    python -m venv venv
    source venv/bin/activate  # On Windows: venv\Scripts\activate
@@ -187,250 +98,350 @@ HTTP_PORT=8000
    pip install -r requirements.txt
    ```
 
-4. **Configure environment**
+4. **Run the server**
    ```bash
-   cp env.example .env
-   # Edit .env file with your settings
+   python main.py
    ```
 
-### Running the Server
+### Docker Deployment
 
-#### Option 1: HTTP Transport (Web/API)
+1. **Build the Docker image**
+   ```bash
+   docker build -t trojan2877/troj-mcp:latest .
+   ```
 
-Start the server for web-based access:
+2. **Run the container**
+   ```bash
+   docker run -d --name troj-mcp -p 8000:8000 trojan2877/troj-mcp:latest
+   ```
+
+3. **Or use Docker Hub**
+   ```bash
+   docker run -d --name troj-mcp -p 8000:8000 trojan2877/troj-mcp:latest
+   ```
+
+## ⚙️ Configuration
+
+### Environment Variables
+
+Create a `.env` file in the project root:
 
 ```bash
-python main.py
+# Server Configuration
+SERVER_HOST=localhost
+SERVER_PORT=8000
+DEBUG=false
+
+# Logging Configuration
+LOG_LEVEL=INFO
+LOG_FILE=logs/troj-mcp.log
+
+# Email Configuration (Optional)
+EMAIL_SERVICE_URL=your_email_service_url
+EMAIL_API_KEY=your_email_api_key
+
+# Calendar Configuration (Optional)
+CALENDAR_SERVICE_URL=your_calendar_service_url
+CALENDAR_API_KEY=your_calendar_api_key
 ```
 
-The server will start on `http://localhost:8000` by default.
+### Configuration File
 
-**Test the HTTP server:**
-```bash
-curl -X POST http://localhost:8000/mcp \
-  -H "Content-Type: application/json" \
-  -d '{"method": "add_numbers", "params": [5, 3], "id": 1}'
+The server uses Pydantic Settings for configuration management. You can customize settings in `src/macro_man/config/settings.py`.
+
+## 🛠️ Development
+
+### Setup Development Environment
+
+1. **Clone and setup**
+   ```bash
+   git clone https://github.com/Shreyas2877/Troj-MCP.git
+   cd Troj-MCP
+   python -m venv venv
+   source venv/bin/activate
+   pip install -r requirements.txt
+   ```
+
+2. **Run tests**
+   ```bash
+   python -m pytest tests/
+   ```
+
+3. **Run linting**
+   ```bash
+   ruff check .
+   ruff format .
+   ```
+
+4. **Run type checking**
+   ```bash
+   mypy src/
+   ```
+
+### Project Structure
+
+```
+Troj-MCP/
+├── src/
+│   └── macro_man/
+│       ├── config/          # Configuration management
+│       ├── core/            # Core server implementation
+│       ├── tools/           # MCP tool implementations
+│       │   ├── basic.py     # Basic utility tools
+│       │   ├── calendar.py  # Calendar integration
+│       │   ├── email.py     # Email management
+│       │   ├── file_ops.py  # File operations
+│       │   └── system.py   # System monitoring
+│       └── utils/           # Utility functions
+├── tests/                   # Test suite
+├── scripts/                 # Development scripts
+├── examples/                # Usage examples
+├── docs/                    # Documentation
+├── requirements.txt         # Python dependencies
+├── pyproject.toml          # Project configuration
+├── Dockerfile              # Docker configuration
+└── README.md               # This file
 ```
 
-#### Option 2: stdio Transport (Claude Desktop)
+## 📚 Usage Examples
 
-Start the server for Claude Desktop integration:
-
-```bash
-python main_stdio.py
-```
-
-This starts the server in stdio mode, waiting for input via stdin.
-
-**Claude Desktop Configuration:**
-```json
-{
-  "mcpServers": {
-    "macro-man": {
-      "command": "python",
-      "args": ["/path/to/main_stdio.py"]
-    }
-  }
-}
-```
-
-### Transport Comparison
-
-| Feature | HTTP Transport | stdio Transport |
-|---------|----------------|-----------------|
-| **Use Case** | Web APIs, external clients | Claude Desktop, process communication |
-| **Communication** | HTTP/JSON-RPC | stdin/stdout/JSON-RPC |
-| **Port** | 8000 (configurable) | None (process communication) |
-| **Client** | Any HTTP client | Claude Desktop, other MCP clients |
-| **Startup** | Manual (`python main.py`) | Automatic (managed by client) |
-| **Lifecycle** | Manual management | Client-managed |
-
-## Email Service Integration Example
-
-### Overview
-
-The server integrates with an external email service running on `localhost:3000`. This demonstrates how to integrate with external APIs and services.
-
-### Email Service API
-
-The email service expects the following format:
-
-**Endpoint:** `POST http://localhost:3000/send-email`
-
-**Request Body:**
-```json
-{
-  "to": "recipient@example.com",
-  "subject": "Email Subject",
-  "body": "Email content"
-}
-```
-
-**Response:**
-```json
-{
-  "success": true,
-  "message": "Email sent successfully",
-  "messageId": "<message-id@example.com>"
-}
-```
-
-### Integration Implementation
+### Basic Operations
 
 ```python
-# src/macro_man/tools/email.py
-def send_email(to: str, subject: str, body: str) -> dict:
-    """
-    Send email via external email service.
-    
-    Args:
-        to: Recipient email address
-        subject: Email subject
-        body: Email body content
-        
-    Returns:
-        Dictionary with email sending result
-    """
-    # Get email service URL from configuration
-    settings = get_settings()
-    email_service_url = f"{settings.email_service_url}/send-email"
-    
-    # Prepare request payload
-    payload = {"to": to, "subject": subject, "body": body}
-    
-    # Make HTTP request to email service
-    response = httpx.post(
-        email_service_url,
-        json=payload,
-        headers={"Content-Type": "application/json"},
-        timeout=30.0,
-    )
-    
-    # Handle response and return result
-    return response.json()
+# Add numbers
+result = add_numbers(5, 3)  # Returns 8
+
+# Multiply numbers
+result = multiply_numbers(4, 7)  # Returns 28
+
+# Greet user
+greeting = greet_user("Alice")  # Returns "Hello, Alice!"
 ```
 
-### Configuration
-
-Set the email service URL in your `.env` file:
-
-```bash
-EMAIL_SERVICE_URL=http://localhost:3000
-```
-
-### Usage
-
-Once configured, the email tool is available to all MCP clients:
+### File Operations
 
 ```python
-# Via HTTP client
-curl -X POST http://localhost:8000/mcp \
-  -H "Content-Type: application/json" \
-  -d '{
-    "method": "send_email",
-    "params": {
-      "to": "user@example.com",
-      "subject": "Test Email",
-      "body": "This is a test email"
-    },
-    "id": 1
-  }'
+# Read a file
+content = read_file("path/to/file.txt")
+
+# Write to a file
+write_file("output.txt", "Hello, World!")
+
+# List directory contents
+files = list_directory("/path/to/directory")
+
+# Read JSON file
+data = read_json_file("config.json")
 ```
 
-## Development
+### System Monitoring
 
-### Running Tests
+```python
+# Get system information
+info = get_system_info()
 
+# Get system statistics
+stats = get_system_stats()
+
+# Get process information
+process = get_process_info(pid=1234)
+```
+
+### Calendar Operations
+
+```python
+# Schedule a meeting
+meeting = schedule_meet(
+    title="Team Meeting",
+    start="2024-01-15T10:00:00",
+    end="2024-01-15T11:00:00",
+    attendees=["alice@example.com", "bob@example.com"]
+)
+
+# List events
+events = list_events(
+    timeMin="2024-01-01T00:00:00Z",
+    timeMax="2024-01-31T23:59:59Z"
+)
+```
+
+### Email Operations
+
+```python
+# Send an email
+send_email(
+    to="recipient@example.com",
+    subject="Test Email",
+    body="This is a test email from Troj-MCP"
+)
+
+# Read emails
+emails = read_email(
+    maxResults=10,
+    includeBody=True
+)
+```
+
+## 🧪 Testing
+
+### Run All Tests
 ```bash
-# Run all tests
-python -m pytest tests/ -v
+python -m pytest tests/
+```
 
-# Run with coverage
+### Run with Coverage
+```bash
 python -m pytest tests/ --cov=src/macro_man --cov-report=html
-
-# Run specific test file
-python -m pytest tests/test_email_tools.py -v
 ```
 
-### Code Quality
+### Run Specific Test Categories
+```bash
+# Unit tests
+python -m pytest tests/test_basic_tools.py
+
+# Integration tests
+python -m pytest tests/test_mcp_integration.py
+
+# Coverage tests
+python -m pytest tests/test_server_coverage.py
+```
+
+## 📊 Logging
+
+Troj-MCP includes comprehensive logging capabilities:
+
+- **Structured Logging** - JSON-formatted logs for machine processing
+- **Correlation IDs** - Track requests across the entire system
+- **Log Levels** - DEBUG, INFO, WARNING, ERROR, CRITICAL
+- **Log Rotation** - Automatic file rotation with retention policies
+- **Performance Monitoring** - Execution time tracking
+
+### Log Analysis
+
+Use the included log analyzer to analyze your logs:
 
 ```bash
-# Linting
-ruff check src/ tests/
-
-# Formatting
-ruff format src/ tests/
-
-# Type checking
-mypy src/ --ignore-missing-imports
+python scripts/log_analyzer.py --log-dir logs --hours 24
 ```
 
-### Adding New Tools
+## 🔧 API Reference
 
-1. **Create tool file** in `src/macro_man/tools/`
-2. **Implement tool function** with proper typing and documentation
-3. **Add to tool registry** in `src/macro_man/tools/__init__.py`
-4. **Write tests** in `tests/`
-5. **Update documentation** as needed
+### Tool Categories
 
-## API Reference
+#### **Basic Tools**
+- `add_numbers(a: float, b: float) -> float`
+- `multiply_numbers(a: float, b: float) -> float`
+- `greet_user(name: str) -> str`
+- `echo_message(message: str) -> str`
 
-### MCP Protocol
+#### **System Tools**
+- `get_system_info() -> dict`
+- `get_system_stats() -> dict`
+- `get_process_info(pid: int) -> dict`
+- `get_environment_variables(prefix: str) -> dict`
+- `get_python_info() -> dict`
 
-The server implements the Model Context Protocol specification:
+#### **File Operations**
+- `read_file(file_path: str) -> str`
+- `write_file(file_path: str, content: str, overwrite: bool) -> bool`
+- `list_directory(directory_path: str, include_hidden: bool) -> list`
+- `read_json_file(file_path: str) -> dict`
+- `write_json_file(file_path: str, data: dict, indent: int) -> bool`
 
-- **Request Format**: JSON-RPC 2.0
-- **Response Format**: JSON-RPC 2.0
-- **Error Handling**: Standardized error codes and messages
-- **Type Safety**: Strong typing for all parameters and responses
+#### **Calendar Tools**
+- `schedule_meet(title: str, start: str, end: str, attendees: list) -> dict`
+- `list_events(timeMin: str, timeMax: str, maxResults: int) -> list`
 
-### Tool Execution
+#### **Email Tools**
+- `send_email(to: str, subject: str, body: str) -> dict`
+- `read_email(maxResults: int, includeBody: bool) -> list`
 
-All tools follow a consistent pattern:
+#### **Command Execution**
+- `execute_command(command: str, timeout: int) -> dict`
 
-```python
-def tool_name(param1: Type1, param2: Type2) -> dict:
-    """
-    Tool description.
-    
-    Args:
-        param1: Parameter description
-        param2: Parameter description
-        
-    Returns:
-        Dictionary with execution result
-        
-    Raises:
-        ValidationError: If parameters are invalid
-        MacroManError: If tool execution fails
-    """
-    # Implementation
-    return {"result": "success", "data": "..."}
+## 🚀 Deployment
+
+### Production Deployment
+
+1. **Environment Setup**
+   ```bash
+   export SERVER_HOST=0.0.0.0
+   export SERVER_PORT=8000
+   export LOG_LEVEL=INFO
+   ```
+
+2. **Run with Gunicorn**
+   ```bash
+   gunicorn -w 4 -k uvicorn.workers.UvicornWorker main:app
+   ```
+
+3. **Docker Production**
+   ```bash
+   docker run -d \
+     --name troj-mcp \
+     -p 8000:8000 \
+     -e LOG_LEVEL=INFO \
+     trojan2877/troj-mcp:latest
+   ```
+
+### Docker Compose
+
+```yaml
+version: '3.8'
+services:
+  troj-mcp:
+    image: trojan2877/troj-mcp:latest
+    ports:
+      - "8000:8000"
+    environment:
+      - LOG_LEVEL=INFO
+    volumes:
+      - ./logs:/app/logs
+    restart: unless-stopped
 ```
 
-## Contributing
+## 🤝 Contributing
+
+We welcome contributions! Please see our [Contributing Guidelines](CONTRIBUTING.md) for details.
+
+### Development Workflow
 
 1. Fork the repository
-2. Create a feature branch
+2. Create a feature branch: `git checkout -b feature/amazing-feature`
 3. Make your changes
-4. Add tests for new functionality
-5. Ensure all tests pass
-6. Submit a pull request
+4. Run tests: `python -m pytest tests/`
+5. Run linting: `ruff check .`
+6. Commit your changes: `git commit -m 'Add amazing feature'`
+7. Push to the branch: `git push origin feature/amazing-feature`
+8. Open a Pull Request
 
-## License
+### Code Standards
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+- Follow PEP 8 style guidelines
+- Use type hints for all functions
+- Write comprehensive tests
+- Update documentation as needed
+- Ensure all tests pass
 
-## Support
+## 📄 License
 
-For questions, issues, or contributions, please:
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-1. Check the existing issues
-2. Create a new issue with detailed information
-3. Provide reproduction steps for bugs
-4. Include relevant logs and error messages
+## 🆘 Support
+
+- **Documentation**: [GitHub Wiki](https://github.com/Shreyas2877/Troj-MCP/wiki)
+- **Issues**: [GitHub Issues](https://github.com/Shreyas2877/Troj-MCP/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/Shreyas2877/Troj-MCP/discussions)
+
+## 🙏 Acknowledgments
+
+- **MCP Protocol** - For the excellent Model Context Protocol specification
+- **FastAPI** - For the amazing async web framework
+- **Python Community** - For the rich ecosystem of libraries
+- **Contributors** - For their valuable feedback and contributions
 
 ---
 
-*Last Updated: December 2024*
-*Version: 1.0.0*
+**Made with ❤️ by the Troj-MCP team**
+
+*For more information, visit our [GitHub repository](https://github.com/Shreyas2877/Troj-MCP) or check out the [documentation](https://github.com/Shreyas2877/Troj-MCP/wiki).*
