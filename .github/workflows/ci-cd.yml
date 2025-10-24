@@ -95,30 +95,31 @@ jobs:
         cache-from: type=gha
         cache-to: type=gha,mode=max
         
-    - name: Create GitHub Release
-      if: github.ref == 'refs/heads/v1.0.0' && github.event_name == 'push'
-      uses: softprops/action-gh-release@v1
-      with:
-        tag_name: v1.0.0
-        name: Release v1.0.0
-        body: |
-          ## 🚀 Release v1.0.0
-          
-          ### Features
-          - MCP Server with comprehensive tool suite
-          - Calendar integration
-          - Email management
-          - File operations
-          - System monitoring
-          
-          ### Docker Image
-          Available on Docker Hub: `${{ env.DOCKER_IMAGE_NAME }}:latest`
-          
-          ### Usage
-          ```bash
-          docker run -d --name troj-mcp trojan2877/troj-mcp:latest
-          ```
-        draft: false
-        prerelease: false
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    # GitHub Release step temporarily disabled to fix CI pipeline
+    # - name: Create GitHub Release
+    #   if: github.ref == 'refs/heads/v1.0.0' && github.event_name == 'push'
+    #   uses: softprops/action-gh-release@v1
+    #   with:
+    #     tag_name: v1.0.0
+    #     name: Release v1.0.0
+    #     body: |
+    #       ## 🚀 Release v1.0.0
+    #       
+    #       ### Features
+    #       - MCP Server with comprehensive tool suite
+    #       - Calendar integration
+    #       - Email management
+    #       - File operations
+    #       - System monitoring
+    #       
+    #       ### Docker Image
+    #       Available on Docker Hub: `${{ env.DOCKER_IMAGE_NAME }}:latest`
+    #       
+    #       ### Usage
+    #       ```bash
+    #       docker run -d --name troj-mcp trojan2877/troj-mcp:latest
+    #       ```
+    #     draft: false
+    #     prerelease: false
+    #   env:
+    #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
