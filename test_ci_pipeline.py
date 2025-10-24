@@ -30,13 +30,13 @@ def test_linting():
     """Test linting tools."""
     print("\n📝 Testing Linting...")
     success = True
-    
+
     # Test ruff
     success &= run_command("ruff check .", "Ruff linting")
-    
+
     # Test black
     success &= run_command("black --check .", "Black formatting")
-    
+
     return success
 
 
@@ -49,7 +49,10 @@ def test_tests():
 def test_coverage():
     """Test coverage reporting."""
     print("\n📊 Testing Coverage...")
-    return run_command("python -m pytest tests/ --cov=src/macro_man --cov-report=term", "Coverage report")
+    return run_command(
+        "python -m pytest tests/ --cov=src/macro_man --cov-report=term",
+        "Coverage report",
+    )
 
 
 def test_docker_build():
@@ -62,26 +65,28 @@ def main():
     """Run all CI/CD pipeline tests."""
     print("🚀 Troj-MCP CI/CD Pipeline Test")
     print("===============================")
-    
+
     # Check if we're in the right directory
     if not Path("pyproject.toml").exists():
         print("❌ Error: Not in Troj-MCP project directory")
         sys.exit(1)
-    
+
     # Check if virtual environment is activated
-    if not hasattr(sys, 'real_prefix') and not (hasattr(sys, 'base_prefix') and sys.base_prefix != sys.prefix):
+    if not hasattr(sys, "real_prefix") and not (
+        hasattr(sys, "base_prefix") and sys.base_prefix != sys.prefix
+    ):
         print("⚠️  Warning: Virtual environment not detected")
         print("Consider running: source venv/bin/activate")
-    
+
     all_success = True
-    
+
     # Run all tests
     all_success &= test_linting()
     all_success &= test_tests()
     all_success &= test_coverage()
     all_success &= test_docker_build()
-    
-    print("\n" + "="*50)
+
+    print("\n" + "=" * 50)
     if all_success:
         print("🎉 All CI/CD pipeline tests PASSED!")
         print("✅ Your code is ready for the v1.0.0 release branch")

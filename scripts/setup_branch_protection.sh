@@ -26,14 +26,30 @@ fi
 # Create branch protection rule
 echo "Creating branch protection rule..."
 
+# Create the protection rule using the correct API format
 gh api repos/$REPO/branches/$BRANCH/protection \
   --method PUT \
-  --field required_status_checks='{"strict":true,"contexts":["test","build-and-deploy"]}' \
-  --field enforce_admins=true \
-  --field required_pull_request_reviews='{"required_approving_review_count":1,"dismiss_stale_reviews":true,"require_code_owner_reviews":false}' \
-  --field restrictions='{"users":["Shreyas2877"],"teams":[],"apps":[]}' \
-  --field allow_force_pushes=false \
-  --field allow_deletions=false
+  --input - << EOF
+{
+  "required_status_checks": {
+    "strict": true,
+    "contexts": ["test", "build-and-deploy"]
+  },
+  "enforce_admins": true,
+  "required_pull_request_reviews": {
+    "required_approving_review_count": 1,
+    "dismiss_stale_reviews": true,
+    "require_code_owner_reviews": false
+  },
+  "restrictions": {
+    "users": ["Shreyas2877"],
+    "teams": [],
+    "apps": []
+  },
+  "allow_force_pushes": false,
+  "allow_deletions": false
+}
+EOF
 
 echo "✅ Branch protection rule created successfully!"
 echo ""

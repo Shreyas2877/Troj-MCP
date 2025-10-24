@@ -42,7 +42,13 @@ echo ""
 
 # Set up branch protection
 echo "🔒 Setting up branch protection rules..."
-./scripts/setup_branch_protection.sh
+echo "Trying automated setup first..."
+if ./scripts/setup_branch_protection_simple.sh; then
+    echo "✅ Automated setup successful!"
+else
+    echo "⚠️  Automated setup failed, using manual instructions..."
+    ./scripts/setup_branch_protection_manual.sh
+fi
 
 echo ""
 echo "📋 Next Steps:"
