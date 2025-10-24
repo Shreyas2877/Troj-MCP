@@ -33,7 +33,7 @@ gh api repos/$REPO/branches/$BRANCH/protection \
 {
   "required_status_checks": {
     "strict": true,
-    "contexts": ["test", "build-and-deploy"]
+    "contexts": ["test", "pr-validation", "build-and-deploy"]
   },
   "enforce_admins": true,
   "required_pull_request_reviews": null,
