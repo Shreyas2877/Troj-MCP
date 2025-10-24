@@ -35,7 +35,7 @@ cat > "$TEMP_FILE" << 'EOF'
 {
   "required_status_checks": {
     "strict": true,
-    "contexts": ["test", "build-and-deploy"]
+    "contexts": ["test"]
   },
   "enforce_admins": true,
   "required_pull_request_reviews": null,

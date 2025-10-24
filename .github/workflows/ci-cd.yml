@@ -1,14 +1,10 @@
-name: CI/CD Pipeline
+name: CI Pipeline
 
 on:
   push:
-    branches: [ v1.0.0 ]
+    branches: [ main, development, v1.0.0 ]
   pull_request:
-    branches: [ v1.0.0 ]
-
-env:
-  DOCKER_IMAGE_NAME: trojan2877/troj-mcp
-  DOCKER_TAG: latest
+    branches: [ main, development, v1.0.0 ]
 
 jobs:
   test:
@@ -55,71 +51,3 @@ jobs:
         flags: unittests
         name: codecov-umbrella
         fail_ci_if_error: false
-
-
-  build-and-deploy:
-    name: Build and Deploy to Docker Hub
-    runs-on: ubuntu-latest
-    needs: test
-    
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-      
-    - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v3
-      
-    - name: Log in to Docker Hub
-      if: github.ref == 'refs/heads/v1.0.0' && github.event_name == 'push'
-      uses: docker/login-action@v3
-      with:
-        username: ${{ secrets.DOCKER_USERNAME }}
-        password: ${{ secrets.DOCKER_PASSWORD }}
-        
-    - name: Extract metadata
-      id: meta
-      uses: docker/metadata-action@v5
-      with:
-        images: ${{ env.DOCKER_IMAGE_NAME }}
-        tags: |
-          type=raw,value=latest
-          
-    - name: Build and push Docker image
-      uses: docker/build-push-action@v5
-      with:
-        context: .
-        platforms: linux/amd64,linux/arm64
-        push: ${{ github.ref == 'refs/heads/v1.0.0' && github.event_name == 'push' }}
-        tags: ${{ env.DOCKER_IMAGE_NAME }}:latest
-        labels: ${{ steps.meta.outputs.labels }}
-        cache-from: type=gha
-        cache-to: type=gha,mode=max
-        
-    # GitHub Release step temporarily disabled to fix CI pipeline
-    # - name: Create GitHub Release
-    #   if: github.ref == 'refs/heads/v1.0.0' && github.event_name == 'push'
-    #   uses: softprops/action-gh-release@v1
-    #   with:
-    #     tag_name: v1.0.0
-    #     name: Release v1.0.0
-    #     body: |
-    #       ## 🚀 Release v1.0.0
-    #       
-    #       ### Features
-    #       - MCP Server with comprehensive tool suite
-    #       - Calendar integration
-    #       - Email management
-    #       - File operations
-    #       - System monitoring
-    #       
-    #       ### Docker Image
-    #       Available on Docker Hub: `${{ env.DOCKER_IMAGE_NAME }}:latest`
-    #       
-    #       ### Usage
-    #       ```bash
-    #       docker run -d --name troj-mcp trojan2877/troj-mcp:latest
-    #       ```
-    #     draft: false
-    #     prerelease: false
-    #   env:
-    #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
