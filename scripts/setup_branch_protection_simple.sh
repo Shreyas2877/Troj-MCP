@@ -43,11 +43,7 @@ cat > "$TEMP_FILE" << 'EOF'
     "dismiss_stale_reviews": true,
     "require_code_owner_reviews": false
   },
-  "restrictions": {
-    "users": ["Shreyas2877"],
-    "teams": [],
-    "apps": []
-  },
+  "restrictions": null,
   "allow_force_pushes": false,
   "allow_deletions": false
 }
@@ -75,11 +71,14 @@ fi
 rm -f "$TEMP_FILE"
 
 echo ""
-echo "📋 Branch protection settings to configure:"
+echo "📋 Branch protection settings configured:"
 echo "- ✅ Require status checks: test, build-and-deploy"
 echo "- ✅ Require pull request reviews: 1 approval"
-echo "- ✅ Restrict pushes to: Shreyas2877 only"
+echo "- ⚠️  User restrictions: Not available for personal repositories"
 echo "- ✅ No force pushes allowed"
 echo "- ✅ No branch deletion allowed"
+echo ""
+echo "ℹ️  Note: Since this is a personal repository, anyone with write access"
+echo "   can push to the branch, but all other protection rules still apply."
 echo ""
 echo "🔍 Verify at: https://github.com/$REPO/settings/branches"

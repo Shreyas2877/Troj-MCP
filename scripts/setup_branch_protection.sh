@@ -41,11 +41,7 @@ gh api repos/$REPO/branches/$BRANCH/protection \
     "dismiss_stale_reviews": true,
     "require_code_owner_reviews": false
   },
-  "restrictions": {
-    "users": ["Shreyas2877"],
-    "teams": [],
-    "apps": []
-  },
+  "restrictions": null,
   "allow_force_pushes": false,
   "allow_deletions": false
 }
