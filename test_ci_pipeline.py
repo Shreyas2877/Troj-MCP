@@ -34,8 +34,8 @@ def test_linting():
     # Test ruff
     success &= run_command("ruff check .", "Ruff linting")
 
-    # Test black
-    success &= run_command("black --check .", "Black formatting")
+    # Test ruff formatting
+    success &= run_command("ruff format --check .", "Ruff formatting")
 
     return success
 
