@@ -97,12 +97,10 @@ jobs:
         
     - name: Create GitHub Release
       if: github.ref == 'refs/heads/v1.0.0' && github.event_name == 'push'
-      uses: actions/create-release@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      uses: softprops/action-gh-release@v1
       with:
         tag_name: v1.0.0
-        release_name: Release v1.0.0
+        name: Release v1.0.0
         body: |
           ## 🚀 Release v1.0.0
           
@@ -122,3 +120,5 @@ jobs:
           ```
         draft: false
         prerelease: false
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
