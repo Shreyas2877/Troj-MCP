@@ -38,11 +38,7 @@ cat > "$TEMP_FILE" << 'EOF'
     "contexts": ["test", "build-and-deploy"]
   },
   "enforce_admins": true,
-  "required_pull_request_reviews": {
-    "required_approving_review_count": 1,
-    "dismiss_stale_reviews": true,
-    "require_code_owner_reviews": false
-  },
+  "required_pull_request_reviews": null,
   "restrictions": null,
   "allow_force_pushes": false,
   "allow_deletions": false
@@ -73,12 +69,12 @@ rm -f "$TEMP_FILE"
 echo ""
 echo "📋 Branch protection settings configured:"
 echo "- ✅ Require status checks: test, build-and-deploy"
-echo "- ✅ Require pull request reviews: 1 approval"
+echo "- ❌ Pull request reviews: Disabled (personal repository)"
 echo "- ⚠️  User restrictions: Not available for personal repositories"
 echo "- ✅ No force pushes allowed"
 echo "- ✅ No branch deletion allowed"
 echo ""
-echo "ℹ️  Note: Since this is a personal repository, anyone with write access"
-echo "   can push to the branch, but all other protection rules still apply."
+echo "ℹ️  Note: Since this is a personal repository, you can merge directly"
+echo "   once the status checks pass. No external reviews required."
 echo ""
 echo "🔍 Verify at: https://github.com/$REPO/settings/branches"
