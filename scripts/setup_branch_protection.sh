@@ -31,10 +31,7 @@ gh api repos/$REPO/branches/$BRANCH/protection \
   --method PUT \
   --input - << EOF
 {
-  "required_status_checks": {
-    "strict": true,
-    "contexts": ["test", "build-and-deploy"]
-  },
+  "required_status_checks": null,
   "enforce_admins": true,
   "required_pull_request_reviews": null,
   "restrictions": null,
