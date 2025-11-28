@@ -201,7 +201,10 @@ class LocalModelClient:
 
         try:
             stdio_ctx = await self.setup_mcp_connection()
-            async with stdio_ctx as (read, write), ClientSession(read, write) as session:
+            async with (
+                stdio_ctx as (read, write),
+                ClientSession(read, write) as session,
+            ):
                 self.mcp_session = session
 
                 # Initialize
@@ -283,9 +286,7 @@ Always explain what you're doing before calling tools."""
                 messages.append(assistant_message)
 
                 # Check if model wants to call a tool
-                if (
-                    assistant_message.get("tool_calls")
-                ):
+                if assistant_message.get("tool_calls"):
                     for tool_call in assistant_message["tool_calls"]:
                         tool_name = tool_call["function"]["name"]
                         try:
