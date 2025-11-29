@@ -270,9 +270,9 @@ def register_calendar_tools(mcp_server) -> None:
         try:
             result = _impl_schedule_meet(
                 title=title,
-                description=description,
                 start=start,
                 end=end,
+                description=description,
                 timeZone=timeZone,
                 attendees=attendees,
                 sendUpdates=sendUpdates,
