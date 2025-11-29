@@ -215,21 +215,39 @@ def read_email(
 def register_email_tools(mcp_server):
     """Register email tools with the MCP server."""
 
+    # Store references to implementation functions from module globals
+    # to avoid shadowing issues when defining wrapper functions with same names
+    _impl_send_email = globals()["send_email"]
+    _impl_read_email = globals()["read_email"]
+
     @mcp_server.tool()
-    def _send_email(to: str, subject: str, body: str) -> str:
-        """
-        Send an email via the external email service.
+    def send_email(to: str, subject: str, body: str) -> str:
+        """Send an email via the external email service.
+
+        Sends an email message to the specified recipient using the configured
+        email service. Validates email address format and ensures all required
+        fields are provided. Returns detailed information about the sending result.
 
         Args:
-            to: Recipient email address
-            subject: Email subject
+            to: Recipient email address (must be valid email format)
+            subject: Email subject line
             body: Email body content
 
         Returns:
-            JSON string with email sending result
+            JSON string containing:
+            - success: Whether the email was sent successfully
+            - message: Status message
+            - messageId: Unique message identifier (if available)
+            - recipient: Recipient email address
+            - subject: Email subject
+            - body_length: Length of email body in characters
+            - details: Additional service-specific details
+
+        Raises:
+            ValidationError: If email address is invalid or required fields are missing
         """
         try:
-            result = send_email(to, subject, body)
+            result = _impl_send_email(to, subject, body)
             return json.dumps(result, indent=2)
         except Exception as e:
             return json.dumps(
@@ -238,7 +256,7 @@ def register_email_tools(mcp_server):
             )
 
     @mcp_server.tool()
-    def _read_email(
+    def read_email(
         fromName: str | None = None,
         subjectContains: str | None = None,
         threadContains: str | None = None,
@@ -246,14 +264,32 @@ def register_email_tools(mcp_server):
         maxResults: int | None = None,
         includeBody: bool | None = None,
     ) -> str:
-        """
-        Read emails from the external email service using optional filters.
+        """Read emails from the external email service using optional filters.
+
+        Retrieves emails from the configured email service with flexible filtering
+        options. Can filter by sender name, subject content, thread content,
+        date range, and limit the number of results. Useful for searching,
+        monitoring, or processing emails programmatically.
+
+        Args:
+            fromName: Filter by sender display name (optional)
+            subjectContains: Filter emails whose subject contains this text (optional)
+            threadContains: Filter emails where thread content contains this text (optional)
+            after: Filter emails after this date (YYYY-MM-DD format, optional)
+            maxResults: Maximum number of emails to return (optional, must be positive)
+            includeBody: Whether to include full email body content (optional)
 
         Returns:
-            JSON string with read email results
+            JSON string containing:
+            - success: Whether the operation succeeded
+            - emails: List of email objects matching the filters
+            - count: Number of emails returned
+
+        Raises:
+            ValidationError: If date format is invalid or maxResults is not positive
         """
         try:
-            result = read_email(
+            result = _impl_read_email(
                 fromName=fromName,
                 subjectContains=subjectContains,
                 threadContains=threadContains,
