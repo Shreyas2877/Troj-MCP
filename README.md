@@ -103,6 +103,27 @@ Troj-MCP is a versatile MCP server that provides a comprehensive suite of tools 
    python main.py
    ```
 
+### Using with Local Models (Free!)
+
+Instead of Claude Desktop, you can use your MCP server with free local models:
+
+**Quick Start:**
+```bash
+# With Ollama
+python local_model_client.py --model ollama:llama3
+
+# With LM Studio
+python local_model_client.py --model lmstudio:local --api-base http://localhost:1234/v1
+```
+
+See [QUICKSTART_LOCAL.md](QUICKSTART_LOCAL.md) for detailed instructions on:
+- Setting up Ollama
+- Using LM Studio
+- Configuring Continue.dev (VS Code extension)
+- Troubleshooting
+
+For comprehensive documentation, see [docs/LOCAL_MODEL_SETUP.md](docs/LOCAL_MODEL_SETUP.md).
+
 ### Docker Deployment
 
 1. **Build the Docker image**
