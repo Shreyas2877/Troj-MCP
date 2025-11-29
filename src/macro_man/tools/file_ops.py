@@ -200,28 +200,133 @@ def write_json_file(
 def register_file_tools(mcp_server) -> None:
     """Register file operation tools."""
 
-    @mcp_server.tool()
-    def _read_file(file_path: str) -> str:
-        return read_file(file_path)
+    # Store references to implementation functions from module globals
+    # to avoid shadowing issues when defining wrapper functions with same names
+    _impl_read_file = globals()["read_file"]
+    _impl_write_file = globals()["write_file"]
+    _impl_list_directory = globals()["list_directory"]
+    _impl_read_json_file = globals()["read_json_file"]
+    _impl_write_json_file = globals()["write_json_file"]
 
     @mcp_server.tool()
-    def _write_file(
+    def read_file(file_path: str) -> str:
+        """Read the contents of a text file.
+
+        Reads and returns the entire contents of a text file as a string.
+        Supports UTF-8 encoding. Useful for reading configuration files,
+        documentation, logs, or any text-based content.
+
+        Args:
+            file_path: Path to the file to read (relative or absolute)
+
+        Returns:
+            The file contents as a string
+
+        Raises:
+            ValidationError: If file doesn't exist or path is not a file
+        """
+        return _impl_read_file(file_path)
+
+    @mcp_server.tool()
+    def write_file(
         file_path: str, content: str, overwrite: bool = False
     ) -> dict[str, Any]:
-        return write_file(file_path, content, overwrite)
+        """Write content to a text file.
+
+        Creates or updates a text file with the provided content. Automatically
+        creates parent directories if they don't exist. By default, prevents
+        overwriting existing files unless explicitly allowed.
+
+        Args:
+            file_path: Path where to write the file (relative or absolute)
+            content: Text content to write to the file
+            overwrite: If True, overwrites existing files. If False, raises
+                      error if file exists (default: False)
+
+        Returns:
+            Dictionary containing:
+            - success: Whether the operation succeeded
+            - file_path: Absolute path of the written file
+            - size: Size of the written content in bytes
+            - overwritten: Whether an existing file was overwritten
+
+        Raises:
+            ValidationError: If file exists and overwrite is False
+        """
+        return _impl_write_file(file_path, content, overwrite)
 
     @mcp_server.tool()
-    def _list_directory(
+    def list_directory(
         directory_path: str = ".", include_hidden: bool = False
     ) -> list[dict[str, Any]]:
-        return list_directory(directory_path, include_hidden)
+        """List files and directories in a given path.
+
+        Returns a list of all items (files and directories) in the specified
+        directory. Each item includes metadata like name, path, type, size,
+        and modification time. Can optionally include hidden files/directories.
+
+        Args:
+            directory_path: Path to the directory to list (default: current directory)
+            include_hidden: If True, includes files/directories starting with '.'
+                          (default: False)
+
+        Returns:
+            List of dictionaries, each containing:
+            - name: Item name
+            - path: Full path to the item
+            - is_file: Whether the item is a file
+            - is_directory: Whether the item is a directory
+            - size: File size in bytes (None for directories)
+            - modified: Modification timestamp
+
+        Raises:
+            ValidationError: If directory doesn't exist or path is not a directory
+        """
+        return _impl_list_directory(directory_path, include_hidden)
 
     @mcp_server.tool()
-    def _read_json_file(file_path: str) -> dict[str, Any]:
-        return read_json_file(file_path)
+    def read_json_file(file_path: str) -> dict[str, Any]:
+        """Read and parse a JSON file.
+
+        Reads a JSON file and parses it into a Python dictionary. Validates
+        that the file contains valid JSON syntax. Useful for reading configuration
+        files, data files, or any structured JSON data.
+
+        Args:
+            file_path: Path to the JSON file to read
+
+        Returns:
+            Parsed JSON data as a dictionary
+
+        Raises:
+            ValidationError: If file doesn't exist or contains invalid JSON
+        """
+        return _impl_read_json_file(file_path)
 
     @mcp_server.tool()
-    def _write_json_file(
+    def write_json_file(
         file_path: str, data: dict[str, Any], indent: int = 2, overwrite: bool = False
     ) -> dict[str, Any]:
-        return write_json_file(file_path, data, indent, overwrite)
+        """Write data to a JSON file with formatting.
+
+        Serializes a Python dictionary to JSON format and writes it to a file.
+        Automatically formats the JSON with indentation for readability.
+        Creates parent directories if needed. Prevents overwriting by default.
+
+        Args:
+            file_path: Path where to write the JSON file
+            data: Dictionary or JSON-serializable data to write
+            indent: Number of spaces for JSON indentation (default: 2)
+            overwrite: If True, overwrites existing files (default: False)
+
+        Returns:
+            Dictionary containing:
+            - success: Whether the operation succeeded
+            - file_path: Absolute path of the written file
+            - size: Size of the written content in bytes
+            - overwritten: Whether an existing file was overwritten
+
+        Raises:
+            ValidationError: If file exists and overwrite is False
+        """
+        return _impl_write_json_file(file_path, data, indent, overwrite)

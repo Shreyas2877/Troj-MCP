@@ -99,15 +99,15 @@ class TestMCPIntegration:
             # Verify we have expected tools
             tools = response["result"]["tools"]
             tool_names = [tool["name"] for tool in tools]
-            assert "_add_numbers" in tool_names
-            assert "_multiply_numbers" in tool_names
-            assert "_greet_user" in tool_names
+            assert "add_numbers" in tool_names
+            assert "multiply_numbers" in tool_names
+            assert "greet_user" in tool_names
 
             # Step 3: Call a tool
             call_request = {
                 "jsonrpc": "2.0",
                 "method": "tools/call",
-                "params": {"name": "_add_numbers", "arguments": {"a": 5, "b": 3}},
+                "params": {"name": "add_numbers", "arguments": {"a": 5, "b": 3}},
                 "id": 3,
             }
 

@@ -223,8 +223,13 @@ def list_events(
 def register_calendar_tools(mcp_server) -> None:
     """Register calendar scheduling tools."""
 
+    # Store references to implementation functions from module globals
+    # to avoid shadowing issues when defining wrapper functions with same names
+    _impl_schedule_meet = globals()["schedule_meet"]
+    _impl_list_events = globals()["list_events"]
+
     @mcp_server.tool()
-    def _schedule_meet(
+    def schedule_meet(
         title: str,
         description: str | None,
         start: str,
@@ -233,8 +238,37 @@ def register_calendar_tools(mcp_server) -> None:
         attendees: list[str] | None = None,
         sendUpdates: str | None = None,
     ) -> str:
+        """Schedule a Google Meet calendar event via external service.
+
+        Creates a calendar event with Google Meet link and sends invitations
+        to specified attendees. Supports timezone-aware scheduling and
+        configurable update notifications. Useful for automating meeting
+        scheduling, coordinating team events, or managing calendars.
+
+        Args:
+            title: Meeting title (required)
+            description: Meeting description or agenda (optional)
+            start: Start time in ISO8601 format (e.g., "2025-10-21T10:00:00Z") (required)
+            end: End time in ISO8601 format (e.g., "2025-10-21T11:00:00Z") (required)
+            timeZone: Timezone identifier (e.g., "America/New_York") (optional)
+            attendees: List of attendee email addresses (optional)
+            sendUpdates: Who should receive updates - "all", "externalOnly", or "none" (optional)
+
+        Returns:
+            JSON string containing:
+            - success: Whether the meeting was scheduled successfully
+            - meetLink: Google Meet URL for the meeting
+            - eventId: Calendar event identifier
+            - start: Confirmed start time
+            - end: Confirmed end time
+            - attendees: List of invited attendees
+
+        Raises:
+            ValidationError: If required fields are missing, datetime format is invalid,
+                           or attendee emails are invalid
+        """
         try:
-            result = schedule_meet(
+            result = _impl_schedule_meet(
                 title=title,
                 description=description,
                 start=start,
@@ -255,20 +289,43 @@ def register_calendar_tools(mcp_server) -> None:
             )
 
     @mcp_server.tool()
-    def _list_events(
+    def list_events(
         timeMin: str,
         timeMax: str,
         maxResults: int | None = None,
         q: str | None = None,
     ) -> str:
-        """
-        List calendar events from the external service.
+        """List calendar events from the external service within a time range.
+
+        Retrieves calendar events from the configured calendar service within
+        the specified time range. Supports optional search queries and result
+        limiting. Useful for checking availability, viewing schedules, or
+        finding specific events.
+
+        Args:
+            timeMin: Start of time range in ISO8601 format (e.g., "2025-10-20T00:00:00Z") (required)
+            timeMax: End of time range in ISO8601 format (e.g., "2025-10-27T23:59:59Z") (required)
+            maxResults: Maximum number of events to return (optional, must be positive)
+            q: Search query string to filter events by title or description (optional)
 
         Returns:
-            JSON string with list of events
+            JSON string containing:
+            - success: Whether the operation succeeded
+            - events: List of event objects
+            - count: Number of events returned
+            Each event includes:
+            - id: Event identifier
+            - title: Event title
+            - start: Start time
+            - end: End time
+            - description: Event description
+            - attendees: List of attendees
+
+        Raises:
+            ValidationError: If time format is invalid or maxResults is not positive
         """
         try:
-            result = list_events(
+            result = _impl_list_events(
                 timeMin=timeMin,
                 timeMax=timeMax,
                 maxResults=maxResults,

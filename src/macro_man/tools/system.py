@@ -232,22 +232,116 @@ def get_python_info() -> dict[str, Any]:
 def register_system_tools(mcp_server) -> None:
     """Register system utility tools."""
 
-    @mcp_server.tool()
-    def _get_process_info(pid: int | None = None) -> dict[str, Any]:
-        return get_process_info(pid)
+    # Store references to implementation functions from module globals
+    # to avoid shadowing issues when defining wrapper functions with same names
+    _impl_get_process_info = globals()["get_process_info"]
+    _impl_get_system_stats = globals()["get_system_stats"]
+    _impl_execute_command = globals()["execute_command"]
+    _impl_get_environment_variables = globals()["get_environment_variables"]
+    _impl_get_python_info = globals()["get_python_info"]
 
     @mcp_server.tool()
-    def _get_system_stats() -> dict[str, Any]:
-        return get_system_stats()
+    def get_process_info(pid: int | None = None) -> dict[str, Any]:
+        """Get detailed information about a system process.
+
+        Retrieves comprehensive process information including PID, name, status,
+        CPU usage, memory consumption, creation time, and thread count. If no
+        PID is provided, returns information about the current process.
+
+        Args:
+            pid: Optional process ID. If None, returns current process info.
+
+        Returns:
+            Dictionary containing:
+            - pid: Process identifier
+            - name: Process name
+            - status: Process status (running, sleeping, etc.)
+            - cpu_percent: CPU usage percentage
+            - memory_info: Memory usage (RSS and VMS)
+            - create_time: Process creation timestamp
+            - num_threads: Number of threads
+        """
+        return _impl_get_process_info(pid)
 
     @mcp_server.tool()
-    def _execute_command(command: str, timeout: int = 30) -> dict[str, Any]:
-        return execute_command(command, timeout)
+    def get_system_stats() -> dict[str, Any]:
+        """Get comprehensive real-time system statistics.
+
+        Retrieves detailed system performance metrics including CPU usage,
+        memory consumption, disk space, swap usage, and network I/O statistics.
+        Useful for monitoring system health, performance analysis, and resource
+        planning.
+
+        Returns:
+            Dictionary containing:
+            - timestamp: Current UTC timestamp
+            - cpu: CPU statistics (percent, count, frequency)
+            - memory: Memory statistics (total, used, free, percent)
+            - swap: Swap space statistics
+            - disk: Disk usage statistics
+            - network: Network I/O counters
+        """
+        return _impl_get_system_stats()
 
     @mcp_server.tool()
-    def _get_environment_variables(prefix: str | None = None) -> dict[str, str]:
-        return get_environment_variables(prefix)
+    def execute_command(command: str, timeout: int = 30) -> dict[str, Any]:
+        """Execute a system command safely with timeout protection.
+
+        Runs a shell command and returns the output, error messages, and exit
+        code. Includes security checks to prevent dangerous operations like
+        file deletion or privilege escalation. Commands are executed with a
+        configurable timeout to prevent hanging.
+
+        Args:
+            command: The shell command to execute
+            timeout: Maximum execution time in seconds (default: 30)
+
+        Returns:
+            Dictionary containing:
+            - command: The executed command
+            - return_code: Exit code (0 = success)
+            - stdout: Standard output
+            - stderr: Standard error output
+            - success: Boolean indicating if command succeeded
+
+        Note:
+            Dangerous commands (rm -rf, sudo, su, etc.) are blocked for safety.
+        """
+        return _impl_execute_command(command, timeout)
 
     @mcp_server.tool()
-    def _get_python_info() -> dict[str, Any]:
-        return get_python_info()
+    def get_environment_variables(prefix: str | None = None) -> dict[str, str]:
+        """Get environment variables, optionally filtered by prefix.
+
+        Retrieves all environment variables from the system. Optionally filters
+        results to only include variables whose names start with the specified
+        prefix. Useful for inspecting configuration, API keys, or system settings.
+
+        Args:
+            prefix: Optional prefix to filter environment variable names.
+                   If provided, only variables starting with this prefix are returned.
+
+        Returns:
+            Dictionary mapping environment variable names to their values
+        """
+        return _impl_get_environment_variables(prefix)
+
+    @mcp_server.tool()
+    def get_python_info() -> dict[str, Any]:
+        """Get detailed information about the Python runtime environment.
+
+        Retrieves comprehensive Python interpreter information including version,
+        executable path, platform, module path, and installed module count.
+        Useful for debugging, compatibility checks, or understanding the execution
+        environment.
+
+        Returns:
+            Dictionary containing:
+            - version: Full Python version string
+            - version_info: Version components (major, minor, micro)
+            - executable: Path to Python interpreter
+            - platform: Platform identifier
+            - path: Python module search paths
+            - modules_count: Number of loaded modules
+        """
+        return _impl_get_python_info()
