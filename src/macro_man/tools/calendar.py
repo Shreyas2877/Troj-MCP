@@ -67,9 +67,9 @@ def _validate_emails(attendees: Iterable[str]) -> list[str]:
 
 def schedule_meet(
     title: str,
-    description: str | None,
     start: str,
     end: str,
+    description: str | None = None,
     timeZone: str | None = None,
     attendees: list[str] | None = None,
     sendUpdates: str | None = None,
@@ -231,9 +231,9 @@ def register_calendar_tools(mcp_server) -> None:
     @mcp_server.tool()
     def schedule_meet(
         title: str,
-        description: str | None,
         start: str,
         end: str,
+        description: str | None = None,
         timeZone: str | None = None,
         attendees: list[str] | None = None,
         sendUpdates: str | None = None,
@@ -247,9 +247,9 @@ def register_calendar_tools(mcp_server) -> None:
 
         Args:
             title: Meeting title (required)
-            description: Meeting description or agenda (optional)
             start: Start time in ISO8601 format (e.g., "2025-10-21T10:00:00Z") (required)
             end: End time in ISO8601 format (e.g., "2025-10-21T11:00:00Z") (required)
+            description: Meeting description or agenda (optional)
             timeZone: Timezone identifier (e.g., "America/New_York") (optional)
             attendees: List of attendee email addresses (optional)
             sendUpdates: Who should receive updates - "all", "externalOnly", or "none" (optional)
@@ -270,9 +270,9 @@ def register_calendar_tools(mcp_server) -> None:
         try:
             result = _impl_schedule_meet(
                 title=title,
-                description=description,
                 start=start,
                 end=end,
+                description=description,
                 timeZone=timeZone,
                 attendees=attendees,
                 sendUpdates=sendUpdates,
